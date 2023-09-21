@@ -1,5 +1,6 @@
 // "C:\Program Files\MongoDB\Server\5.0\bin\mongod.exe" --dbpath="c:\data\db"
 
+const ejsMate = require("ejs-mate");
 const express = require("express");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
@@ -19,6 +20,8 @@ mongoose
     console.log(err);
   });
 
+// view engine
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 

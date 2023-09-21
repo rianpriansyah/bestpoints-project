@@ -25,17 +25,6 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-app.get("/seed/places", async (req, res) => {
-  const place = new Place({
-    title: "Empire State Building",
-    price: "$99999999",
-    description: "A great building",
-    location: "New York, NY",
-  });
-  await place.save();
-  res.send(place);
-});
-
 app.listen(3000, () => {
   console.log(`server is running on http://127.0.0.1:3000`);
 });

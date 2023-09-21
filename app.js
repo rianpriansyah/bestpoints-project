@@ -25,6 +25,11 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
+app.get("/places", async (req, res) => {
+  const places = await Place.find();
+  res.render("places/index", { places });
+});
+
 app.listen(3000, () => {
   console.log(`server is running on http://127.0.0.1:3000`);
 });

@@ -3,6 +3,7 @@
 const ejsMate = require("ejs-mate");
 const express = require("express");
 const ExpressError = require("./utils/ExpressError");
+const Joi = require("joi");
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const wrapAsync = require("./utils/wrapAsync");
@@ -51,6 +52,22 @@ app.get("/places/create", (req, res) => {
 app.post(
   "/places",
   wrapAsync(async (req, res, next) => {
+    const placeSchema = Joi.object({
+      place: Joi.object({
+        title: Joi.string().required(),
+        location: Joi.string().required(),
+        description: Joi.string().required(),
+        price: Joi.number().min(0).required(),
+        image: Joi.string().required(),
+      }).required(),
+    });
+    const { error } = placeSchema.validate(req.body);
+
+    if (error) {
+      console.log(error);
+      return next(new ExpressError(error, 400));
+    }
+
     const place = new Place(req.body.place);
     await place.save();
     res.redirect("/places");

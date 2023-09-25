@@ -33,6 +33,7 @@ router.post(
   wrapAsync(async (req, res, next) => {
     const place = new Place(req.body.place);
     await place.save();
+    req.flash("success_msg", "Place Created!");
     res.redirect("/places");
   })
 );
@@ -58,6 +59,7 @@ router.put(
   validatePlace,
   wrapAsync(async (req, res) => {
     await Place.findByIdAndUpdate(req.params.id, { ...req.body.place });
+    req.flash("success_msg", "Place Updated!");
     res.redirect("/places");
   })
 );

@@ -3,6 +3,7 @@ const wrapAsync = require("../utils/wrapAsync");
 const Place = require("../models/place");
 const { placeSchema } = require("../schemas/place");
 const ExpressError = require("../utils/ExpressError");
+const isValidObjectId = require("../middleware/isValidObjectId");
 const router = express.Router();
 
 const validatePlace = (req, res, next) => {
@@ -40,6 +41,7 @@ router.post(
 
 router.get(
   "/:id",
+  isValidObjectId("/places"),
   wrapAsync(async (req, res) => {
     const place = await Place.findById(req.params.id).populate("reviews");
     res.render("places/show", { place });
@@ -48,6 +50,7 @@ router.get(
 
 router.get(
   "/:id/edit",
+  isValidObjectId("/places"),
   wrapAsync(async (req, res) => {
     const place = await Place.findById(req.params.id);
     res.render("places/edit", { place });
@@ -56,6 +59,7 @@ router.get(
 
 router.put(
   "/:id",
+  isValidObjectId("/places"),
   validatePlace,
   wrapAsync(async (req, res) => {
     await Place.findByIdAndUpdate(req.params.id, { ...req.body.place });
@@ -64,10 +68,14 @@ router.put(
   })
 );
 
-router.delete("/:id", async (req, res) => {
-  await Place.findByIdAndDelete(req.params.id);
-  req.flash("success_msg", "Place Deleted!");
-  res.redirect("/places");
-});
+router.delete(
+  "/:id",
+  isValidObjectId("/places"),
+  wrapAsync(async (req, res) => {
+    await Place.findByIdAndDelete(req.params.id);
+    req.flash("success_msg", "Place Deleted!");
+    res.redirect("/places");
+  })
+);
 
 module.exports = router;

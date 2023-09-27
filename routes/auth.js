@@ -49,7 +49,7 @@ router.post("/logout", (req, res) => {
       return next(err);
     }
     req.flash("success_msg", "You are now logged out");
-    res.redirect("/places");
+    res.redirect("/login");
   });
 });
 

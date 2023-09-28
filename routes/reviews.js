@@ -1,8 +1,6 @@
 const express = require("express");
 const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError");
-const Place = require("../models/place");
-const Review = require("../models/review");
 const ReviewController = require("../controllers/reviews");
 const { reviewSchema } = require("../schemas/review");
 const isValidObjectId = require("../middlewares/isValidObjectId");

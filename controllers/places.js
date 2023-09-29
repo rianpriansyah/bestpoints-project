@@ -66,3 +66,29 @@ module.exports.delete = async (req, res) => {
   req.flash("success_msg", "Place Deleted!");
   res.redirect("/places");
 };
+
+module.exports.deleteImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { images } = req.body;
+
+    if (!images || images.length === 0) {
+      req.flash("error_msg", "Please select at least one image");
+      return res.redirect(`/places/${id}/edit`);
+    }
+
+    // Hapus file gambar dari sistem file
+    images.forEach((image) => {
+      fs.unlinkSync(image);
+    });
+
+    // Hapus data gambar dari model Place
+    await Place.findByIdAndUpdate(id, { $pull: { images: { url: { $in: images } } } });
+
+    req.flash("success_msg", "Successfully deleted images");
+    return res.redirect(`/places/${id}/edit`);
+  } catch (err) {
+    req.flash("error_msg", "Failed to delete images");
+    return res.redirect(`/places/${id}/edit`);
+  }
+};

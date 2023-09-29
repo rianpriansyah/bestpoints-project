@@ -8,14 +8,7 @@ const { validatePlace } = require("../middlewares/validator");
 const upload = require("../configs/multer");
 const router = express.Router();
 
-router
-  .route("/")
-  .get(wrapAsync(PlaceController.index))
-  .post(isAuth, upload.array("image", 5), async (req, res) => {
-    console.log(req.files);
-    console.log(req.body);
-    res.send("it work");
-  });
+router.route("/").get(wrapAsync(PlaceController.index)).post(isAuth, upload.array("image", 5), validatePlace, wrapAsync(PlaceController.store));
 
 router.get("/create", isAuth, (req, res) => {
   res.render("places/create");

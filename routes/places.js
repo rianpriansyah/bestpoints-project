@@ -17,7 +17,7 @@ router.get("/create", isAuth, (req, res) => {
 router
   .route("/:id")
   .get(isValidObjectId("/places"), wrapAsync(PlaceController.show))
-  .put(isAuth, isAuthorPlace, isValidObjectId("/places"), validatePlace, wrapAsync(PlaceController.update))
+  .put(isAuth, isAuthorPlace, isValidObjectId("/places"), upload.array("image", 5), validatePlace, wrapAsync(PlaceController.update))
   .delete(isAuth, isAuthorPlace, isValidObjectId("/places"), wrapAsync(PlaceController.delete));
 
 router.get("/:id/edit", isAuth, isAuthorPlace, isValidObjectId("/places"), wrapAsync(PlaceController.edit));

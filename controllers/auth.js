@@ -26,7 +26,7 @@ module.exports.loginForm = (req, res) => {
 
 module.exports.login = (req, res) => {
   req.flash("success_msg", "You are now logged in");
-  res.redirect("/places");
+  res.redirect("/");
 };
 
 module.exports.logout = (req, res) => {
@@ -35,6 +35,6 @@ module.exports.logout = (req, res) => {
       return next(err);
     }
     req.flash("success_msg", "You are now logged out");
-    res.redirect("/login");
+    res.redirect("/");
   });
 };

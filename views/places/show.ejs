@@ -43,6 +43,7 @@
     </div>
   </div>
   <div class="col-6">
+    <div style="width: 640px; height: 480px; margin-bottom: 5%" id="mapContainer"></div>
     <% if(currentUser) {%>
     <h3>Leave a review</h3>
     <form action="/places/<%= place._id %>/reviews" method="POST" class="validated-form mb-3" novalidate>
@@ -85,3 +86,19 @@
     <% } %>
   </div>
 </div>
+
+<script>
+  const place = <%- JSON.stringify(place) %>;
+  const coordinates = { lng: place.geometry.coordinates[0], lat: place.geometry.coordinates[1] }
+</script>
+
+<script>
+  const platform = new H.service.Platform({
+    apikey: "VJXH6jf9Wpsv1fPDHGxu84QZ1099BJniaGuLxEJWs10",
+  });
+  const maptypes = platform.createDefaultLayers();
+  const map = new H.Map(document.getElementById("mapContainer"), maptypes.vector.normal.map, {
+    zoom: 10,
+    center: coordinates,
+  });
+</script>

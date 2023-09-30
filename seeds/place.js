@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Place = require("../models/place");
+const { geometry } = require("../utils/hereMaps");
 
 mongoose
   .connect("mongodb://127.0.0.1/bestpoints")
@@ -98,48 +99,6 @@ async function seedPlaces() {
       image: "https://source.unsplash.com/collection/2349781/1280x720",
     },
     {
-      title: "Pulau Komodo",
-      price: 5000000,
-      description: "Pulau di Indonesia yang terkenal dengan komodo, hewan terbesar di dunia",
-      location: "Pulau Komodo, East Nusa Tenggara",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
-      title: "Taman Nasional Gunung Rinjani",
-      price: 150000,
-      description: "Taman nasional yang terletak di Lombok dan memiliki gunung tertinggi kedua di Indonesia",
-      location: "Taman Nasional Gunung Rinjani, Lombok, West Nusa Tenggara",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
-      title: "Bukit Tinggi",
-      price: 0,
-      description: "Kota kecil yang terletak di Sumatera Barat dengan arsitektur khas Eropa",
-      location: "Bukit Tinggi, West Sumatra",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
-      title: "Pulau Weh",
-      price: 0,
-      description: "Pulau yang terletak di ujung barat Indonesia dengan keindahan bawah laut yang luar biasa",
-      location: "Pulau Weh, Sabang, Aceh",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
-      title: "Taman Safari Indonesia",
-      price: 0,
-      description: "Taman hiburan keluarga dengan berbagai satwa liar di Cisarua, Bogor",
-      location: "Taman Safari Indonesia, Cisarua, West Java",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
-      title: "Gunung Merbabu",
-      price: 50000,
-      description: "Gunung yang terletak di Jawa Tengah dengan pemandangan matahari terbit yang indah",
-      location: "Gunung Merbabu, Central Java",
-      image: "https://source.unsplash.com/collection/2349781/1280x720",
-    },
-    {
       title: "Pulau Lombok",
       price: 0,
       description: "Pulau di Indonesia yang terkenal dengan keindahan pantainya",
@@ -156,16 +115,23 @@ async function seedPlaces() {
   ];
 
   try {
-    const newPlace = places.map((place) => {
-      return {
-        ...place,
-        author: "6515867cfb7e5244028d2696",
-        images: {
-          url: "public\\images\\image-1695990004518-44955347.jpg",
-          filename: "image-1695990004518-44955347.jpg",
-        },
-      };
-    });
+    const newPlace = await Promise.all(
+      places.map(async (place) => {
+        let geoData = await geometry(place.location);
+        if (!geoData) {
+          geoData = { type: "Point", coordinates: [116.32883, -8.90952] };
+        }
+        return {
+          ...place,
+          author: "6515867cfb7e5244028d2696",
+          images: {
+            url: "public\\images\\image-1695990004518-44955347.jpg",
+            filename: "image-1695990004518-44955347.jpg",
+          },
+          geometry: geoData,
+        };
+      })
+    );
 
     await Place.deleteMany({});
     await Place.insertMany(newPlace);

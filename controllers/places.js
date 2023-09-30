@@ -41,7 +41,11 @@ module.exports.edit = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
-  const place = await Place.findByIdAndUpdate(req.params.id, { ...req.body.place });
+  const { place } = req.body;
+
+  const geoData = await geometry(place.location);
+
+  const newPlace = await Place.findByIdAndUpdate(req.params.id, { ...place, geometry: geoData });
 
   if (req.files && req.files.length > 0) {
     place.images.forEach((image) => {
@@ -49,8 +53,8 @@ module.exports.update = async (req, res) => {
     });
 
     const images = req.files.map((file) => ({ url: file.path, filename: file.filename }));
-    place.images = images;
-    await place.save();
+    newPlace.images = images;
+    await newPlace.save();
   }
 
   req.flash("success_msg", "Place Updated!");

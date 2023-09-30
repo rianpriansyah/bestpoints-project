@@ -5,7 +5,14 @@ const ExpressError = require("../utils/ExpressError");
 
 module.exports.index = async (req, res) => {
   const places = await Place.find();
-  res.render("places/index", { places });
+  const clusterPlaces = places.map((place) => {
+    return {
+      lat: place.geometry.coordinates[1],
+      lng: place.geometry.coordinates[0],
+    };
+  });
+  const cluster = JSON.stringify(clusterPlaces);
+  res.render("places/index", { places, cluster });
 };
 
 module.exports.store = async (req, res, next) => {

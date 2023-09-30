@@ -11,7 +11,6 @@ const path = require("path");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
-const hereMaps = require("./utils/hereMaps");
 const app = express();
 
 // connect to mongodb
@@ -58,9 +57,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", async (req, res) => {
-  const result = await hereMaps.geocode("Taman Mini Indonesia Indah, Jakarta");
-  console.log(result);
+app.get("/", (req, res) => {
   res.render("home");
 });
 
